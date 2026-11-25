@@ -1,0 +1,310 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Sodium – Roblox UI library</title>
+<style>
+:root{--bg:#eef0ea;--panel:#fff;--ink:#14170f;--mute:#586050;--line:#d9ddd0;--code:#14160f;--codeink:#e6f4d2;--hi:#2f7d12;color-scheme:light;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--bg:#0e100c;--panel:#171a13;--ink:#eaefe0;--mute:#9aa38e;--line:#262b1f;--code:#0a0b08;--hi:#a6f24a;color-scheme:dark}}
+:root[data-theme="dark"]{--bg:#0e100c;--panel:#171a13;--ink:#eaefe0;--mute:#9aa38e;--line:#262b1f;--code:#0a0b08;--hi:#a6f24a;color-scheme:dark}
+*,*::before,*::after{box-sizing:inherit}
+html{scroll-padding-top:calc(env(safe-area-inset-top,0px) + 70px);-webkit-text-size-adjust:100%}
+body{margin:0;background:var(--bg);color:var(--ink);font:16px/1.6 "Avenir Next","Segoe UI",system-ui,sans-serif}
+body::before{content:"";position:fixed;inset:0 0 auto;height:env(safe-area-inset-top,0px);background:var(--bg);z-index:10}
+[hidden]{display:none!important}
+a{color:inherit}
+header{position:sticky;top:env(safe-area-inset-top,0px);z-index:9;background:var(--bg);border-bottom:1px solid var(--line)}
+.bar{max-width:1080px;margin:auto;padding:10px 20px;display:flex;align-items:center;gap:20px}
+.logo{font:800 17px "Futura","Century Gothic","Trebuchet MS",sans-serif;letter-spacing:.04em;background:linear-gradient(#303030,#1c1c1c);padding:6px 12px;border-radius:8px;text-decoration:none;border:2px solid #1a1a1a}
+.logo span,.grad{background:linear-gradient(90deg,#b0ff46,#3cEba0);-webkit-background-clip:text;background-clip:text;color:transparent}
+nav{display:flex;gap:4px;margin-left:auto}
+nav a{padding:6px 14px;border-radius:99px;text-decoration:none;color:var(--mute);font-weight:600}
+nav a.on{background:var(--ink);color:var(--bg)}
+nav a:focus-visible,button:focus-visible{outline:2px solid #3ceba0;outline-offset:2px}
+.wrap{max-width:1080px;margin:auto;padding:0 20px}
+h1{font:800 clamp(30px,5.4vw,54px)/1.08 "Avenir Next","Segoe UI",sans-serif;letter-spacing:-.02em;margin:48px 0 14px;max-width:16em}
+.lead{font-size:18px;color:var(--mute);max-width:36em;margin:0 0 22px}
+.btns{display:flex;gap:10px;flex-wrap:wrap;margin-bottom:34px}
+.b{font:700 15px inherit;font-family:inherit;border:0;border-radius:10px;padding:11px 18px;cursor:pointer;text-decoration:none;display:inline-block}
+.b.p{background:linear-gradient(90deg,#b0ff46,#3cEba0);color:#10120c}
+.b.s{background:transparent;color:var(--ink);border:1px solid var(--line)}
+.stage{position:relative;background:radial-gradient(120% 90% at 20% 0,#1d2218,#0b0c09);border-radius:26px;min-height:470px;padding:28px 14px;overflow:hidden;display:flex;justify-content:center;align-items:center;touch-action:pan-y}
+.hint{margin:12px 4px 56px;color:var(--mute);font-size:14px}
+.win{width:100%;max-width:700px;background:linear-gradient(#424242,#282828);border-radius:20px;padding-bottom:12px;color:#ececec;box-shadow:0 30px 60px #0009;font-family:system-ui,sans-serif}
+.tb{height:46px;background:linear-gradient(#303030,#1a1a1a);border-radius:20px 20px 0 0;display:flex;align-items:center;justify-content:space-between;padding:0 14px;cursor:grab;touch-action:none;user-select:none}
+.tb b{font:900 28px "Futura","Century Gothic","Trebuchet MS",sans-serif;letter-spacing:.02em}
+.hex{width:30px;height:32px;border:0;background:linear-gradient(135deg,#b0ff46,#3cEba0);clip-path:polygon(50% 0,100% 25%,100% 75%,50% 100%,0 75%,0 25%);font:900 14px system-ui;color:#10120c;cursor:pointer}
+.body{margin:12px 12px 0;background:linear-gradient(#1b1b1b,#0d0d0d);border-radius:18px;display:flex;gap:12px;padding:12px;height:300px}
+.side{width:112px;display:flex;flex-direction:column;gap:6px;border-right:2px solid #262626;padding-right:12px}
+.side button{border:0;border-radius:9px;height:34px;background:linear-gradient(#2e2e2e,#1f1f1f);color:#969696;font:700 13px system-ui;cursor:pointer}
+.side button.on{background:linear-gradient(90deg,#b0ff46,#3cEba0);color:#0f0f0f}
+.pages{flex:1;overflow:auto;min-width:0}
+.pg{display:none;flex-direction:column;gap:6px}.pg.on{display:flex}
+.pg h4{margin:2px 0;font:900 12px "Futura","Trebuchet MS",sans-serif;background:linear-gradient(90deg,#b0ff46,#3cEba0);-webkit-background-clip:text;background-clip:text;color:transparent}
+.row{background:linear-gradient(#2e2e2e,#1f1f1f);border:1px solid #1e1e1e;border-radius:9px;padding:0 10px;min-height:36px;display:flex;align-items:center;justify-content:space-between;gap:8px;font:700 13px system-ui;position:relative;cursor:pointer;flex-wrap:wrap}
+.row>span:first-child{padding:9px 0}
+.sw{width:36px;height:18px;border-radius:9px;background:#141414;position:relative;flex:none;transition:background .15s}
+.sw i{position:absolute;top:3px;left:3px;width:12px;height:12px;border-radius:50%;background:#969696;transition:left .15s,background .15s}
+.sw.on{background:linear-gradient(90deg,#b0ff46,#3cEba0)}.sw.on i{left:21px;background:#0f0f0f}
+.sl{display:block;padding:8px 10px 10px;cursor:default}
+.sl div{display:flex;justify-content:space-between}
+.sl em{font-style:normal;color:#b0ff46}
+.track{height:6px;background:#141414;border-radius:3px;margin-top:10px;position:relative;touch-action:none;cursor:pointer}
+.track::after{content:"";position:absolute;inset:-12px 0}
+.track i{display:block;height:100%;width:16%;border-radius:3px;background:linear-gradient(90deg,#b0ff46,#3cEba0)}
+.dd{display:block;padding:0}
+.dd>div{display:flex;justify-content:space-between;padding:9px 10px}
+.dd b{color:#b0ff46;font-weight:700}
+.opts{display:none;padding:0 6px 6px;gap:2px;flex-direction:column}
+.dd.open .opts{display:flex}
+.opts button{border:0;border-radius:7px;height:28px;background:linear-gradient(#1c1c1c,#111);color:#ececec;font:600 13px system-ui;cursor:pointer}
+.opts button.on{color:#b0ff46}
+.field{background:#111;border:1px solid #1e1e1e;border-radius:7px;color:#ececec;font:600 13px system-ui;padding:5px 8px;width:120px}
+.mini{position:absolute;left:18px;top:50%;margin-top:-23px;width:66px;height:46px;border-radius:8px;border:2px solid #1a1a1a;background:linear-gradient(#424242,#282828);font:900 13px "Futura","Trebuchet MS",sans-serif;cursor:grab;touch-action:none;user-select:none;display:grid;place-items:center}
+.toast{position:absolute;right:14px;bottom:14px;background:linear-gradient(#424242,#282828);border:1px solid #b0ff46;border-radius:12px;padding:9px 12px;color:#ececec;font:600 13px system-ui;opacity:0;transform:translateY(8px);transition:.25s;pointer-events:none}
+.toast.on{opacity:1;transform:none}
+.toast b{display:block;font-weight:900}
+h2{font:800 clamp(22px,3vw,30px)/1.2 "Avenir Next","Segoe UI",sans-serif;letter-spacing:-.01em;margin:0 0 18px}
+.feat{display:grid;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));gap:0 48px;margin-bottom:56px}
+.feat div{border-top:1px solid var(--line);padding:16px 0 18px}
+.feat h3{margin:0 0 4px;font-size:17px}.feat p{margin:0;color:var(--mute)}
+pre{background:var(--code);color:var(--codeink);border-radius:12px;padding:16px 18px;overflow-x:auto;font:13px/1.65 ui-monospace,"SF Mono",Menlo,Consolas,monospace;margin:12px 0;position:relative}
+pre button{position:absolute;top:8px;right:8px;border:1px solid #3a4130;background:#1a1d14;color:#cfe6b0;border-radius:7px;font:600 12px system-ui;padding:4px 9px;cursor:pointer}
+.docs{display:grid;grid-template-columns:210px minmax(0,1fr);gap:40px;padding-top:28px}
+.toc{position:sticky;top:calc(env(safe-area-inset-top,0px) + 70px);align-self:start;display:flex;flex-direction:column;gap:2px;max-height:calc(100vh - 100px);overflow:auto}
+.toc button{background:none;border:0;text-align:left;padding:6px 10px;border-radius:8px;color:var(--mute);font:600 14px inherit;font-family:inherit;cursor:pointer}
+.toc button:hover,.toc button.on{background:var(--panel);color:var(--ink)}
+.doc section{padding:8px 0 30px;border-bottom:1px solid var(--line);margin-bottom:22px}
+.doc h3{font:800 22px "Avenir Next","Segoe UI",sans-serif;margin:8px 0 6px}
+.doc p{margin:6px 0;max-width:42em}
+code{font:13px ui-monospace,Menlo,Consolas,monospace;background:var(--panel);border:1px solid var(--line);padding:1px 6px;border-radius:6px}
+pre code{background:none;border:0;padding:0}
+.tw{overflow-x:auto;margin:10px 0}
+table{border-collapse:collapse;width:100%;font-size:14px}
+th,td{text-align:left;padding:8px 12px 8px 0;border-bottom:1px solid var(--line);vertical-align:top}
+th{color:var(--mute);font-weight:600}
+footer{border-top:1px solid var(--line);margin-top:24px;padding:22px 20px 34px;color:var(--mute);font-size:14px;text-align:center}footer a{color:var(--ink);font-weight:600}
+@media (max-width:760px){.docs{grid-template-columns:1fr}.toc{position:static;flex-direction:row;overflow-x:auto;max-height:none;padding-bottom:6px}.toc button{white-space:nowrap}.side{width:84px}.body{height:330px}}
+@media (prefers-reduced-motion:reduce){*{transition:none!important}}
+</style>
+</head>
+<body>
+<header><div class="bar"><a class="logo" href="#showcase"><span>SODIUM</span></a><nav><a href="#showcase">Showcase</a><a href="#docs">Documentation</a></nav></div></header>
+
+<main id="showcase">
+<div class="wrap">
+<h1>Roblox menus that look finished on the first run.</h1>
+<p class="lead">Sodium is a single-file Luau UI library with gradients, touch support and a window that keeps working even when your script doesn’t.</p>
+<div class="btns"><a class="b p" href="#docs">Read the documentation</a><button class="b s" id="cp">Copy starter code</button><button class="b s" id="cpl">Copy llm.txt</button></div>
+
+<div class="stage" id="stage">
+<div class="win" id="win">
+<div class="tb" id="tb"><b class="grad">SODIUM</b><button class="hex" id="x" aria-label="Close window">X</button></div>
+<div class="body">
+<div class="side"><button class="on" data-p="a">Main</button><button data-p="b">Extra</button></div>
+<div class="pages">
+<div class="pg on" data-p="a">
+<h4>BASICS</h4>
+<div class="row" id="notify"><span>Notify me</span><span class="grad">&#9670;</span></div>
+<div class="row tg"><span>Enabled</span><span class="sw"><i></i></span></div>
+<div class="row sl"><div><span>Speed</span><em>16</em></div><div class="track"><i></i></div></div>
+</div>
+<div class="pg" data-p="b">
+<h4>INPUTS</h4>
+<div class="row dd"><div><span>Mode</span><b>Normal v</b></div><div class="opts"><button>Easy</button><button class="on">Normal</button><button>Hard</button></div></div>
+<div class="row" style="cursor:default"><span>Minimize text</span><input class="field" id="mt" placeholder="type here" aria-label="Minimize text"></div>
+<div class="row tg"><span>Show gradients</span><span class="sw on"><i></i></span></div>
+</div>
+</div></div></div>
+<button class="mini" id="mini" hidden><span class="grad" id="ml">SODIUM</span></button>
+<div class="toast" id="toast"><b class="grad">SODIUM</b>Button clicked!</div>
+</div>
+<p class="hint">This is a live copy of the window. Drag the title bar, press X, then tap the small square that appears. It can be dragged too, and the Extra tab’s text box renames it.</p>
+
+<h2>What you get</h2>
+<div class="feat">
+<div><h3>Gradients everywhere</h3><p>Lime-to-mint accents on a dark, layered surface. Edit the Theme table to recolor all of it.</p></div>
+<div><h3>Hidden minimize button</h3><p>Clicking X reveals a small, draggable square with text you choose. A tap brings the window back.</p></div>
+<div><h3>Dragging that holds up</h3><p>One routine for mouse and touch, measured from on-screen positions so scaling never skews it.</p></div>
+<div><h3>Fault tolerant</h3><p>Every method is wrapped. A bad option or a failed call warns and moves on instead of stopping your script.</p></div>
+<div><h3>Works on phones</h3><p>The window scales to fit, sliders pause page scrolling while dragged, and touch input is handled throughout.</p></div>
+<div><h3>No image assets</h3><p>Even the hexagon close button is built from frames, so nothing to upload and nothing that can fail to load.</p></div>
+</div>
+
+<h2>Start in ten lines</h2>
+<pre id="starter"><code></code></pre>
+<p class="hint" style="margin-bottom:64px">Every method is covered in the <a href="#docs">documentation</a>.</p>
+</div>
+</main>
+
+<main id="docs" hidden>
+<div class="wrap docs">
+<div class="toc" id="toc"></div>
+<div class="doc" id="doc"></div>
+</div>
+</main>
+
+<footer>Inspired by <a href="https://modrinth.com/mod/sodium" target="_blank" rel="noopener">Sodium</a>, a Minecraft mod.</footer>
+
+<script>
+const $=(s,r=document)=>r.querySelector(s),$$=(s,r=document)=>[...r.querySelectorAll(s)];
+const STARTER=`local Sodium = require(script.Parent.Sodium)
+
+local Window = Sodium:CreateWindow({ Title = "SODIUM" })
+local Main = Window:CreateTab("Main")
+
+Main:AddSection("Basics")
+Main:AddButton({ Name = "Say hi", Callback = function()
+	Window:Notify({ Title = "SODIUM", Content = "Hi!" })
+end })
+Main:AddToggle({ Name = "Enabled", Callback = print })
+Main:AddSlider({ Name = "Speed", Min = 0, Max = 100, Default = 16, Callback = print })`;
+
+const LLM=`# Sodium
+
+> Sodium is a single-file Luau UI library for Roblox. It builds a dark, gradient window with tabs and controls, works with mouse and touch, and never throws: every method is wrapped, so a failure prints a warning and returns a harmless object. Inspired by Sodium, a Minecraft mod.
+
+Use this file when writing Luau code that calls Sodium. Use only the methods listed here. Do not invent others.
+
+## Load
+
+\`\`\`lua
+local Sodium = require(script.Parent.Sodium)
+-- or: local Sodium = loadstring(game:HttpGet("YOUR_URL"))()
+\`\`\`
+
+## Window
+
+\`Sodium:CreateWindow(options)\` returns a Window. Every option is optional.
+
+- Title (string, default "SODIUM")
+- MinimizeText (string, default: the Title)
+- ToggleKey (Enum.KeyCode, default Enum.KeyCode.RightShift)
+
+Window methods (call with a colon):
+
+- CreateTab(name) returns a Tab
+- Notify({ Title, Content, Duration }) Duration defaults to 4 seconds
+- Minimize(), Restore(), Toggle(), SetVisible(bool)
+- SetMinimizeText(text), SetTitle(text), ResetPosition(), Destroy()
+
+Behavior: the X button hides the window and reveals a small draggable minimize button; tapping it restores the window. ToggleKey hides or shows the window without revealing the minimize button. The window is dragged by its title bar and scales to fit the screen.
+
+## Tab
+
+Each method takes one table unless noted. Callback is always optional.
+
+- AddSection(text) takes a string
+- AddLabel(text) takes a string; returns { Set(text) }
+- AddButton({ Name, Callback }) returns { Fire() }
+- AddToggle({ Name, Default = false, Callback(value) }) returns { Set(value, silent), Get() }
+- AddSlider({ Name, Min = 0, Max = 100, Default = Min, Increment = 1, Callback(value) }) returns { Set(value, silent), Get() }
+- AddTextBox({ Name, Default, Placeholder, Callback(text, enterPressed) }) returns { Set(text), Get() }
+- AddKeybind({ Name, Default (Enum.KeyCode), Callback(key), ChangedCallback(key) }) returns { Get() }
+- AddDropdown({ Name, Options = { "A", "B" }, Default, Callback(choice) }) returns { Set(value, silent), Get() }
+
+Notes:
+
+- A toggle with Default = true calls its Callback once on creation.
+- Dropdown options are converted to strings. A Default that is not in Options is ignored.
+- Slider values snap to Increment and stay between Min and Max.
+- Passing true as the second argument to Set skips the Callback.
+
+## Example
+
+\`\`\`lua
+local Sodium = require(script.Parent.Sodium)
+
+local Window = Sodium:CreateWindow({ Title = "SODIUM", MinimizeText = "OPEN" })
+local Main = Window:CreateTab("Main")
+
+Main:AddSection("Basics")
+Main:AddButton({ Name = "Say hi", Callback = function()
+	Window:Notify({ Title = "SODIUM", Content = "Hi!" })
+end })
+Main:AddToggle({ Name = "Enabled", Callback = function(on) print(on) end })
+Main:AddSlider({ Name = "Speed", Min = 0, Max = 100, Default = 16, Callback = print })
+Main:AddDropdown({ Name = "Mode", Options = { "Easy", "Normal", "Hard" }, Default = "Normal", Callback = print })
+\`\`\`
+
+## Common mistakes
+
+- Use a colon, not a dot: Window:CreateTab("Main"), not Window.CreateTab("Main").
+- AddButton, AddToggle, AddSlider, AddTextBox, AddKeybind and AddDropdown take a table, not a string.
+- Window:Toggle() never shows the minimize button; only the X button does.
+- There is no AddColorPicker, AddImage or AddProgressBar. Do not call methods that are not listed above.
+- Do not use a Window or Tab after Window:Destroy().
+
+## Theming
+
+Edit the Theme table at the top of Sodium.lua. Gradients (AccentGrad, WindowGrad, TitleGrad, ContentGrad, ElementGrad, InputGrad) are lists of Color3 values. Fonts are TitleFont, Font and BodyFont.
+
+## Fault tolerance
+
+The UI parents to gethui, then CoreGui, then PlayerGui, whichever allows it. Creating a second window removes the first. If CreateWindow fails, it returns a no-op object, so later calls are safe and do nothing.
+
+## Credit
+
+Inspired by Sodium, a Minecraft mod.
+`;
+const D=[
+{id:"install",t:"Installation",p:"Add Sodium.lua to your game as a ModuleScript and require it, or host the file yourself and load it at runtime.",c:`local Sodium = require(script.Parent.Sodium)\n\nlocal Sodium = loadstring(game:HttpGet("YOUR_URL"))()`},
+{id:"window",t:"CreateWindow",p:"Creates the window and returns a Window object. Every option is optional.",o:[["Title","string","\"SODIUM\"","Text in the title bar."],["MinimizeText","string","Title","Text on the minimize button."],["ToggleKey","Enum.KeyCode","RightShift","Hides or shows the window."]],c:`local Window = Sodium:CreateWindow({\n\tTitle = "SODIUM",\n\tMinimizeText = "OPEN",\n\tToggleKey = Enum.KeyCode.RightShift,\n})`},
+{id:"methods",t:"Window methods",p:"Methods on the Window object.",o:[["CreateTab(name)","","","Adds a tab and returns it. The first tab is selected automatically."],["Notify({Title, Content, Duration})","","","Shows a toast. Duration defaults to 4 seconds."],["Minimize()","","","Hides the window and shows the minimize button."],["Restore()","","","Shows the window and hides the minimize button."],["Toggle()","","","Hides or shows the window without revealing the minimize button."],["SetVisible(bool)","","","Same as Restore or a quiet hide."],["SetMinimizeText(text)","","","Changes the minimize button text. Empty text falls back to the title."],["SetTitle(text)","","","Changes the title bar text."],["ResetPosition()","","","Centers the window again."],["Destroy()","","","Removes the UI and disconnects every listener."]]},
+{id:"minimize",t:"Minimize button",p:"The small square stays hidden until the user clicks X. It can be dragged anywhere on screen. A tap or click restores the window, and moving more than 8 pixels counts as a drag instead. The toggle key never shows it.",c:`Window:SetMinimizeText("MENU")`},
+{id:"section",t:"AddSection and AddLabel",p:"Sections are gradient headings. Labels show text you can update with label:Set(text).",c:`Tab:AddSection("Combat")\nlocal info = Tab:AddLabel("Ready")\ninfo:Set("Updated")`},
+{id:"button",t:"AddButton",p:"Runs Callback when clicked or tapped. The returned object has Fire() to run it from code.",o:[["Name","string","\"Button\"",""],["Callback","function","nil","Called with no arguments."]],c:`Tab:AddButton({ Name = "Run", Callback = function() print("clicked") end })`},
+{id:"toggle",t:"AddToggle",p:"A switch. Callback receives true or false. Set(value, silent) and Get() control it from code.",o:[["Name","string","\"Toggle\"",""],["Default","boolean","false","Starting state. A true default also fires Callback."],["Callback","function","nil","Called with the new value."]],c:`local t = Tab:AddToggle({ Name = "ESP", Callback = print })\nt:Set(true, true) -- second argument skips the callback`},
+{id:"slider",t:"AddSlider",p:"Drag to choose a number. Values snap to Increment and stay between Min and Max. Invalid ranges fall back to 0–100.",o:[["Name","string","\"Slider\"",""],["Min / Max","number","0 / 100",""],["Default","number","Min",""],["Increment","number","1","Step size. Must be above 0."],["Callback","function","nil","Called with the number."]],c:`Tab:AddSlider({ Name = "Speed", Min = 0, Max = 100, Default = 16, Callback = print })`},
+{id:"textbox",t:"AddTextBox",p:"Single-line input. Callback runs when the box loses focus.",o:[["Name","string","\"TextBox\"",""],["Default","string","\"\"",""],["Placeholder","string","\"...\"",""],["Callback","function","nil","Receives (text, enterPressed)."]],c:`Tab:AddTextBox({ Name = "Name", Callback = function(text) print(text) end })`},
+{id:"keybind",t:"AddKeybind",p:"Click the box, then press a key to rebind. Escape clears it. Get() returns the current KeyCode.",o:[["Name","string","\"Keybind\"",""],["Default","Enum.KeyCode","Unknown",""],["Callback","function","nil","Runs when the bound key is pressed."],["ChangedCallback","function","nil","Runs when the user rebinds."]],c:`Tab:AddKeybind({ Name = "Action", Default = Enum.KeyCode.E, Callback = print })`},
+{id:"dropdown",t:"AddDropdown",p:"Pick one option from a list. A Default that is not in Options is ignored.",o:[["Name","string","\"Dropdown\"",""],["Options","table","{}","Values are converted to strings."],["Default","any","nil",""],["Callback","function","nil","Receives the chosen string."]],c:`Tab:AddDropdown({ Name = "Mode", Options = { "Easy", "Normal", "Hard" }, Default = "Normal", Callback = print })`},
+{id:"notify",t:"Notify",p:"Toasts slide in at the bottom right and fade out after Duration seconds.",c:`Window:Notify({ Title = "SODIUM", Content = "Saved", Duration = 3 })`},
+{id:"safe",t:"Fault tolerance",p:"Every public method is wrapped. If something fails, Sodium prints a warning and returns a harmless object, so chained calls keep working. If the window cannot be built at all, CreateWindow cleans up and returns that same object. Options are validated and fall back to defaults. The UI parents to gethui, then CoreGui, then PlayerGui, whichever allows it. Creating a second window removes the first."},
+{id:"theme",t:"Theming",p:"All colors, gradients and fonts live in the Theme table at the top of Sodium.lua. Each gradient is a list of Color3 values.",c:`AccentGrad = { rgb(176, 255, 70), rgb(60, 235, 160) },\nWindowGrad = { rgb(66, 66, 66), rgb(40, 40, 40) },`},
+{id:"ai",t:"For AI assistants",p:"A plain-text reference written for language models. Paste it into a prompt or a project so generated code uses only real Sodium methods. The same text is available as llm.txt.",c:LLM}
+];
+const esc=s=>s.replace(/&/g,"&amp;").replace(/</g,"&lt;");
+function pre(code){const p=document.createElement("pre"),c=document.createElement("code"),b=document.createElement("button");c.textContent=code;b.textContent="Copy";b.onclick=()=>copy(code,b);p.append(c,b);return p}
+async function copy(t,b){const o=b.textContent;try{await navigator.clipboard.writeText(t);b.textContent="Copied"}catch(e){b.textContent="Select and copy"}setTimeout(()=>b.textContent=o,1400)}
+const toc=$("#toc"),doc=$("#doc");
+D.forEach(d=>{
+ const tb=document.createElement("button");tb.textContent=d.t;tb.onclick=()=>$("#d-"+d.id).scrollIntoView({behavior:"smooth"});toc.append(tb);
+ const s=document.createElement("section");s.id="d-"+d.id;
+ s.innerHTML=`<h3>${esc(d.t)}</h3><p>${esc(d.p)}</p>`;
+ if(d.o){const w=document.createElement("div");w.className="tw";const wide=d.o[0][1]!=="";
+  w.innerHTML=wide?`<table><tr><th>Option</th><th>Type</th><th>Default</th><th>Notes</th></tr>${d.o.map(r=>`<tr><td><code>${esc(r[0])}</code></td><td>${esc(r[1])}</td><td>${esc(r[2])}</td><td>${esc(r[3])}</td></tr>`).join("")}</table>`
+  :`<table><tr><th>Method</th><th>What it does</th></tr>${d.o.map(r=>`<tr><td><code>${esc(r[0])}</code></td><td>${esc(r[3])}</td></tr>`).join("")}</table>`;
+  s.append(w)}
+ if(d.c){const p=pre(d.c);if(d.id==="ai")p.style.maxHeight="420px";s.append(p)}
+ doc.append(s)});
+$("#starter").replaceWith(pre(STARTER));
+$("#cp").onclick=e=>copy(STARTER,e.target);
+$("#cpl").onclick=e=>copy(LLM,e.target);
+
+function route(){const d=location.hash==="#docs";$("#showcase").hidden=d;$("#docs").hidden=!d;$$("nav a").forEach(a=>a.classList.toggle("on",(a.hash==="#docs")===d));scrollTo(0,0)}
+addEventListener("hashchange",route);route();
+
+$$(".side button").forEach(b=>b.onclick=()=>{$$(".side button").forEach(x=>x.classList.toggle("on",x===b));$$(".pg").forEach(p=>p.classList.toggle("on",p.dataset.p===b.dataset.p))});
+$$(".tg").forEach(r=>r.onclick=()=>$(".sw",r).classList.toggle("on"));
+$$(".sl").forEach(s=>{const t=$(".track",s),f=$("i",t),v=$("em",s);let on=0;const set=e=>{const r=t.getBoundingClientRect(),n=Math.round(Math.min(1,Math.max(0,(e.clientX-r.left)/r.width))*100);f.style.width=n+"%";v.textContent=n};
+ t.onpointerdown=e=>{on=1;t.setPointerCapture(e.pointerId);set(e)};t.onpointermove=e=>on&&set(e);t.onpointerup=()=>on=0});
+$$(".dd").forEach(d=>{const lab=$("b",d);$("div",d).onclick=()=>d.classList.toggle("open");$$(".opts button",d).forEach(o=>o.onclick=()=>{$$(".opts button",d).forEach(x=>x.classList.toggle("on",x===o));lab.textContent=o.textContent+" v";d.classList.remove("open")})});
+let tt;$("#notify").onclick=()=>{const t=$("#toast");t.classList.add("on");clearTimeout(tt);tt=setTimeout(()=>t.classList.remove("on"),2600)};
+
+const stage=$("#stage"),win=$("#win"),mini=$("#mini");
+function drag(h,t,th,click){let sx,sy,ox=0,oy=0,cx=0,cy=0,mv=0,on=0;
+ h.addEventListener("pointerdown",e=>{if(e.target.closest("#x,input"))return;on=1;mv=0;sx=e.clientX;sy=e.clientY;h.setPointerCapture(e.pointerId)});
+ h.addEventListener("pointermove",e=>{if(!on)return;const dx=e.clientX-sx,dy=e.clientY-sy;if(!mv&&Math.hypot(dx,dy)<th)return;mv=1;cx=ox+dx;cy=oy+dy;t.style.translate=cx+"px "+cy+"px"});
+ h.addEventListener("pointerup",()=>{if(!on)return;on=0;if(!mv){click&&click();return}
+  const a=t.getBoundingClientRect(),b=stage.getBoundingClientRect();
+  if(a.right<b.left+60||a.left>b.right-60||a.bottom<b.top+30||a.top>b.bottom-30){cx=cy=0;t.style.translate="0px 0px"}
+  ox=cx;oy=cy})}
+drag($("#tb"),win,2);
+drag(mini,mini,8,()=>{mini.hidden=true;win.style.visibility="visible"});
+$("#x").onclick=()=>{win.style.visibility="hidden";mini.hidden=false};
+$("#mt").oninput=e=>{$("#ml").textContent=e.target.value.trim()||"SODIUM"};
+</script>
+</body>
+</html>
